@@ -1,8 +1,9 @@
-import type { NextAuthConfig }  from 'next-auth'
+import type {NextAuthConfig} from 'next-auth'
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { db } from "../next/./lib/db";
+
+import { db } from "./src/lib/db";
 
 const credentialsConfig = CredentialsProvider({
   name: "Credentials",

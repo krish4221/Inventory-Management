@@ -1,5 +1,5 @@
 import React from "react";
-import CompanyDataTable from "../components/CompanyDataTable";
+import CompDataTable from "../../components/MasterDataTable";
 import { db } from "@/lib/db";
 
 
@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 
 const Dashboard = async () => {
   const [CompanyData, clients] = await db.$transaction([
-    db.client.findMany(),
+    db.company.findMany(),
     db.user.findMany(),
   ]);
   
@@ -23,7 +23,7 @@ const Dashboard = async () => {
  
   return (
     <>
-    <CompanyDataTable data={response} />
+    <CompDataTable data={response} />
    
 
     </>

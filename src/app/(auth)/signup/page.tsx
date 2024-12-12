@@ -1,49 +1,88 @@
-"use client";
-import React, { useOptimistic } from "react";
-import { loginSignup } from "../../../actions/user";
-import FormInput from "../../../components/FormInput";
-import { Button } from "@/components/ui/button"
+"use client"
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { Label } from '@/components/ui/label';
-import { Toast } from "@/components/ui/toast";
+import FormInput from '@/app/components/FormInput'
+import { Button } from '@/components/ui/button'
+import { loginSignup } from '@/action/user'
+import { toast } from '../../../components/ui/use-toast'
+import { z } from 'zod'
 
+
+const signupSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+})
 
 function Signup() {
-    const [loading, setLoading] = useOptimistic(false);
+  const [loading, setLoading] = useState(false)
+  const [formErrors, setFormErrors] = useState<any>({})
 
-  const handleSubmit = async (formData: FormData) => {
-    setLoading(true);
-    const res = await loginSignup(formData, false);
-    if (res?.error) {
-      Toast({ title: res?.error });
+  
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    
+    const formData = new FormData(e.target as HTMLFormElement)
+
+   
+    setFormErrors({})
+
+    
+    const formValues = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      password: formData.get('password'),
     }
-    setLoading(false);
-  };
+
+    
+    try {
+      signupSchema.parse(formValues) 
+    } catch (err: any) {
+      setFormErrors(err.formErrors.fieldErrors)
+      return 
+    }
+
+    
+    setLoading(true)
+    const res = await loginSignup(formData, false)
+
+    if (res?.error) {
+      toast({ title: res?.error })
+    }
+
+    setLoading(false)
+  }
 
   return (
-    <div>
-      <div className="grid place-content-center min-h-screen bg-gray-100">
+    <div className="grid place-content-center min-h-screen bg-gray-100">
       <div className="flex flex-col justify-center gap-5 items-center py-10 w-[450px] shadow-lg rounded-lg bg-white">
         <h1 className="text-center font-bold text-4xl">Sign Up</h1>
-        <form action={handleSubmit} className="w-full px-5">
+        <form onSubmit={handleSubmit} className="w-full px-5">
           <FormInput
             name="name"
             type="text"
             placeholder="Enter your name"
             label="Full Name"
+            error={formErrors.name}
           />
+
           <FormInput
             name="email"
             type="email"
             placeholder="Enter the email"
             label="Email"
+            error={formErrors.email}
           />
+
           <FormInput
             name="password"
             type="password"
             placeholder="Enter the password"
             label="Enter Password"
+            error={formErrors.password}
           />
+
           <Button
             type="submit"
             className={`${
@@ -57,10 +96,9 @@ function Signup() {
           href="/login"
           className="text-center text-blue-800 cursor-pointer underline"
         >
-          Already have and account? Login
+          Already have an account? Login
         </Link>
       </div>
-    </div>
     </div>
   )
 }

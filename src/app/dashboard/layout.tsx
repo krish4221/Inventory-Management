@@ -1,7 +1,7 @@
-import Siderbar from "../../components/siderbar";
+import Siderbar from "../components/Sidebar";
 import React, { ReactNode } from "react";
 import { auth } from "../../../auth";
-import { db } from "../../../lib/db";
+import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
 const DashboardLayout = async ({ children }: { children: ReactNode }) => {
@@ -18,6 +18,7 @@ const DashboardLayout = async ({ children }: { children: ReactNode }) => {
   } else {
     redirect("/login");
   }
+  
 
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-[0.25fr_1fr]">

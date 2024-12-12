@@ -1,19 +1,20 @@
-"use client";
-import React, { useOptimistic } from "react";
-import { loginSignup } from "../../../actions/user";
-import FormInput from "../../../components/FormInput";
-import { Button } from "@/components/ui/button"
+"use client"
+import React, { useOptimistic } from 'react'
+import FormInput from '@/app/components/FormInput'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Toast } from "@/components/ui/toast";
+import { loginSignup } from '@/action/user'
+import {toast} from '../../../components/ui/use-toast'
 
-const Login = () => {
+function Login() {
+
   const [loading, setLoading] = useOptimistic(false);
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     const res = await loginSignup(formData, true);
     if (res?.error) {
-      Toast({ title: res?.error });
+      toast({ title: res?.error });
     }
     setLoading(false);
   };
@@ -51,7 +52,7 @@ const Login = () => {
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import React from "react";
 import { auth } from "../../../../auth";
-import ClientsData from "../../../components/ClientsData";
+import ClientsData from "../../components/ClientsData";
 
 const ClientsPage = async () => {
   const session = await auth();
