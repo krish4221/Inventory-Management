@@ -11,6 +11,8 @@ type Props = {
   defaultValue?: string;
   error?: string;
   isRequired?: boolean; 
+  
+  
 };
 
 const FormInput = ({
@@ -20,6 +22,7 @@ const FormInput = ({
   placeholder,
   label,
   defaultValue,
+  
   error,
   isRequired,
 }: Props) => {
@@ -36,6 +39,8 @@ const FormInput = ({
         name={name}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        
+        
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>

@@ -258,15 +258,19 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
   export const addUpdateMaster = async (formData: FormData, data: any) => {
     const session = await auth();
   
-   
+    if (!session || !session.user?.email) {
+      return { error: "Session or user email is invalid." };
+    }
+  
     const name = formData.get("name") as string;
     const city = formData.get("city") as string;
     const mobileno = parseInt(formData.get("mobileno") as string, 10);
     const email = formData.get("email") as string;
+    const pincode = parseInt(formData.get("pincode") as string, 10);
   
     
-    if (!name || !mobileno || isNaN(mobileno) || !city || !email) {
-      return { error: "All fields are required and mobileno must be a valid number." };
+    if (!name || !mobileno || isNaN(mobileno) || !city || !email || isNaN(pincode)) {
+      return { error: "All fields are required and mobileno/pincode must be valid numbers." };
     }
   
     
@@ -274,8 +278,11 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
       where: { email: session?.user?.email || "" },
     });
   
-   
-    const userId = user?.id || null;
+    if (!user?.id) {
+      return { error: "User not found or session expired." };
+    }
+  
+    const userId = user.id;
   
     
     const defaultData = {
@@ -287,13 +294,15 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
       telebox: "",
       comments: "",
       status: true,
-      pincode: 0,
+      pincode, // Ensure pincode is included
     };
   
     try {
       let company;
+  
+      // Check if we're updating or creating a new company
       if (data?.id) {
-       
+        console.log("Updating company with data:", { name, city, email, mobileno, userId, ...defaultData });
         company = await db.company.update({
           where: { id: data.id },
           data: {
@@ -302,11 +311,11 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
             email,
             mobileno,
             userId,
-            ...defaultData, 
+            ...defaultData,
           },
         });
       } else {
-       
+        console.log("Creating new company with data:", { name, city, email, mobileno, userId, ...defaultData });
         company = await db.company.create({
           data: {
             name,
@@ -314,7 +323,7 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
             email,
             mobileno,
             userId,
-            ...defaultData, 
+            ...defaultData,
           },
         });
       }
@@ -323,13 +332,13 @@ export const loginSignup = async (formData: FormData, isLogin: boolean) => {
         return { error: "Failed to save company data." };
       }
   
-      
       revalidatePath(`/dashboard`);
-  
       return company;
     } catch (error) {
       console.error("Error saving company:", error);
       return { error: "An error occurred while saving the company data." };
     }
   };
+  
+  
   

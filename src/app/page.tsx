@@ -12,7 +12,7 @@ export default async function Home() {
   if (session) {
     const user = await db.user.findUnique({
       where: { email: session?.user?.email! },
-      include: { Inventory: true,Client:true,Company:true},
+      include: { Inventory: true,Client:true,Company:true,Plant:true},
     });
     console.log(user, "user");
 

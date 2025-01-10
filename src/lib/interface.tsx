@@ -70,3 +70,20 @@ export type CompanyProps = {
     createdAt: Date;
     updatedAt: Date | null;
   }[];
+
+
+  export type PlantDataProps = {
+    id: string;
+    name: string;
+    name1:string;
+    street:string;
+    city:string;
+    pobox:string;
+    region:string;
+    tax:string;
+    factory:string;
+    pincode:number;
+    lifeSpan: number;
+    createdAt: Date;
+    updatedAt: Date | null;
+  }[];

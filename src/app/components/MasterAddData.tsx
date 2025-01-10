@@ -1,14 +1,36 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from "@/components/ui/sheet";
 import FormInput from "./FormInput";
 import { addUpdateMaster } from "../../action/user";
 import { toast } from "../../components/ui/use-toast";
 import CountryDropdown from "./Countrydropdown";
 import Languagedropdown from './Languagedropdown';
 import Currencydropdown from './Currencydropdown';
-import ClientDropDown from './Clientdropdown'
+import ClientDropDown from './Clientdropdown';
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+// Zod Validation Schema
+const schema = z.object({
+  name: z.string().min(1, { message: "Company Name is required" }),  // Required field
+  street: z.string().min(1, { message: "Company Code is required" }), // Required field
+  status: z.enum(["True", "False"], { message: "Please select a status" }), // Required field
+  city: z.string().min(1, { message: "City is required" }),  // Required field
+  pincode: z.string().min(1, { message: "Pincode is required" }),  // Required field
+  mobileno: z.string().min(1, { message: "Mobile number is required" }),  // Required field
+  email: z.string().email({ message: "Invalid email" }),  // Optional but valid email format
+  pobox: z.string().optional(),
+  companyPostalCode: z.string().optional(),
+  telephone: z.string().optional(),
+  fax: z.string().optional(),
+  dataline: z.string().optional(),
+  telebox: z.string().optional(),
+});
+
+type FormData = z.infer<typeof schema>;
 
 type Props = {
   title: string;
@@ -16,7 +38,12 @@ type Props = {
 };
 
 const CompanyAddData = ({ title, data }: Props) => {
-  const handleSubmit = async (formData: FormData) => {
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: data || {},
+  });
+
+  const onSubmit = async (formData: any) => {
     const response: any = await addUpdateMaster(formData, data);
     if (response?.error) {
       toast({ title: response?.error });
@@ -43,11 +70,7 @@ const CompanyAddData = ({ title, data }: Props) => {
         </div>
 
         <div className="grid gap-4">
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            handleSubmit(formData);
-          }}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 mt-5 mb-3">
               <div className="grid grid-cols-3 gap-5">
                 <FormInput
@@ -57,6 +80,7 @@ const CompanyAddData = ({ title, data }: Props) => {
                   placeholder="Enter company name"
                   defaultValue={data?.name}
                   isRequired={true}
+                  error={errors.name?.message}
                 />
                 <FormInput
                   type="text"
@@ -65,39 +89,28 @@ const CompanyAddData = ({ title, data }: Props) => {
                   placeholder="Enter Company Code"
                   defaultValue={data?.street}
                   isRequired={true}
+                  error={errors.street?.message}
                 />
+                <div className="flex flex-col">
+                  <Label htmlFor="status">Status</Label>
+                  <Controller
+                    control={control}
+                    name="status"
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        id="status"
+                        className="border rounded p-2 text-sm"
+                      >
+                        <option value="" disabled>Select a Status</option>
+                        <option value="True">True</option>
+                        <option value="False">False</option>
+                      </select>
+                    )}
+                  />
+                  {errors.status && <span className="text-red-500">{errors.status.message}</span>}
+                </div>
 
-
-
-<div className="flex flex-col">
-      <label htmlFor="country" className="mb-2">
-        Status<span className="text-red-500 ml-1">*</span>
-      </label>
-      <select
-        id="country"
-        name="country"
-        defaultValue=""
-        className="border rounded p-2 text-sm"
-        
-      >
-        <option value="" disabled>
-          Select a Status
-        </option>
-        
-          <option  >
-           True
-          </option>
-          <option  >
-          False
-          </option>
-       
-      </select>
-    </div>
-
-
-                
-                
-                
                 <div className="flex flex-col">
                   <ClientDropDown />
                 </div>
@@ -110,20 +123,22 @@ const CompanyAddData = ({ title, data }: Props) => {
                 <div className="flex flex-col">
                   <Currencydropdown />
                 </div>
+
                 <FormInput
                   type="text"
                   name="city"
                   label="City"
                   placeholder="Enter city name"
                   defaultValue={data?.city}
+                  error={errors.city?.message}
                 />
-                
                 <FormInput
-                  type="number"
+                  type="text"
                   name="pincode"
                   label="Pincode"
                   placeholder="Enter postal code"
                   defaultValue={data?.pincode}
+                  error={errors.pincode?.message}
                 />
               </div>
             </div>
@@ -138,13 +153,6 @@ const CompanyAddData = ({ title, data }: Props) => {
                 label="PO Box"
                 placeholder="Enter PO Box"
                 defaultValue={data?.pobox}
-              />
-              <FormInput
-                type="text"
-                name="pincode"
-                label="Postal Code"
-                placeholder="Enter postal code"
-                defaultValue={data?.pincode}
               />
               <FormInput
                 type="text"
@@ -173,7 +181,7 @@ const CompanyAddData = ({ title, data }: Props) => {
                 placeholder="Enter mobile number"
                 defaultValue={data?.mobileno}
                 isRequired={true}
-
+                error={errors.mobileno?.message}
               />
               <FormInput
                 type="text"
@@ -189,6 +197,7 @@ const CompanyAddData = ({ title, data }: Props) => {
                 placeholder="Enter email"
                 defaultValue={data?.email}
                 isRequired={true}
+                error={errors.email?.message}
               />
               <FormInput
                 type="text"

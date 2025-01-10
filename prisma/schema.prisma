@@ -22,6 +22,9 @@ model User {
   countries Country[]    
   Currency  Currency[]
   Company   Company[]
+  Plant     Plant[]
+  
+  
 }
 
 model Client {
@@ -104,4 +107,31 @@ model Company {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt  
+}
+
+model Plant {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  name1       String
+  street      String
+  city        String
+  pobox       String
+  factory     String
+  region      String
+  tax         String
+  pincode     Int
+  userId      String? @db.ObjectId
+  user        User?   @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt  
+}
+
+
+
+model Person {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  email String @unique
+  phone String @unique
 }

@@ -26,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CompDataProps } from "../../lib/interface";
+import { CompanyDataProps } from "../../lib/interface";
 import {
   Select,
   SelectContent,
@@ -46,10 +46,11 @@ import {
 } from "../../components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
 
-import MasterAddData from "./MasterAddData";
+import PlantAddData from "./PlantAddData";
 
+// import CompanyUpdate from "./CompanyUpdate";
 
-export const columns: ColumnDef<CompDataProps>[] = [
+export const columns: ColumnDef<CompanyDataProps>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -88,7 +89,13 @@ export const columns: ColumnDef<CompDataProps>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
 
-  
+  {
+    accessorKey: "factory",
+    header: "Factory Calender",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("factory")}</div>
+    ),
+  },
   {
     accessorKey: "city",
     header: "city",
@@ -96,7 +103,13 @@ export const columns: ColumnDef<CompDataProps>[] = [
       <div className="capitalize">{row.getValue("city")}</div>
     ),
   },
-  
+  {
+    accessorKey: "region",
+    header: "Region",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("region")}</div>
+    ),
+  },
   {
     accessorKey: "pincode",
     header: "pincode",
@@ -104,21 +117,7 @@ export const columns: ColumnDef<CompDataProps>[] = [
       <div className="capitalize">{row.getValue("pincode")}</div>
     ),
   },
-  {
-    accessorKey: "mobileno",
-    header: "Mobile no",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("mobileno")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("email")}</div>
-    ),
-  },
-  
+ 
 
   
   // {
@@ -129,9 +128,7 @@ export const columns: ColumnDef<CompDataProps>[] = [
   // },
 ];
 
-const CompanyDataTable = ({ data }: any) => {
-
- 
+const PlantDataTable = ({ data }: any) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -211,10 +208,9 @@ const CompanyDataTable = ({ data }: any) => {
       <div className="p-6">
         <div className="flex item justify-between pt-3 pb-6">
           <h1 className="text-3xl font-bold tracking-tight">
-            Company Data
+            Plant Data
           </h1>
-          <MasterAddData  title="Add Company" data={{}} />
-          
+          <PlantAddData  title="Add Plant" data={{}} />
         </div>
         <div>
           <div className="rounded-md border">
@@ -297,4 +293,4 @@ const CompanyDataTable = ({ data }: any) => {
   );
 };
 
-export default CompanyDataTable;
+export default PlantDataTable;
